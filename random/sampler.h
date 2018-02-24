@@ -1,6 +1,7 @@
 #ifndef SWIFTCPP_RANDOM_SAMPLER_H_
 #define SWIFTCPP_RANDOM_SAMPLER_H_
 #include <cstdint>
+#include <ctime>
 #include <unordered_map>
 namespace swiftcpp {
 /*
@@ -9,26 +10,48 @@ namespace swiftcpp {
  * Template Arguments:
  *   @R: the class of D's density function which support operator(uint64_t id)
  * to get the probability of id.
- *   @T: random sample's data type
  *
- * TODO NOTE Currently, due to the limitation of double 's storage accurancy between
+ * TODO NOTE Currently, due to the limitation of double 's storage accurancy
+ * between
  * [0., 1.], only 1 million ids is supported.
  */
-template <typename D, typename R, typename T> class IntegarRandomSampler {
+template <typename D, typename R> class IntegarRandomSampler {
 public:
-  RandomSampler(const R *dens, uint64_t min, uint64_t max)
+  typedef uint64_t id_t;
+  typedef double prob_t;
+
+  IntegarRandomSampler(const R *dens, id_t min, id_t max)
       : dens_(dens), min_(min), max_(max) {
     build_random_table_meta_info();
   }
-  T random_sample() { return (*dist_)(); }
+
+  id_t operator() { return sample(); }
+
+  id_t sample() {
+    prob_t prob = static_cast<prob_t>(std::rand()) / std::RAND_MAX;
+    uint64_t low = 0, high = rand_table_.size();
+
+    uint64_t mid, last_mid;
+    while (low + 1 < high) {
+      mid = (low + high) / 2;
+      const auto &item = rand_table_[mid];
+      if (item.second > prob)
+        high = mid;
+      else if (item.second < prob)
+        low = mid;
+      else
+        return item.first;
+    }
+    return mid;
+  }
 
 protected:
   void build_random_table_meta_info() {
-    double total_prob = 0.;
+    prob_t total_prob = 0.;
     for (uint64_t id = min_; id <= max_; id++) {
-      double prob = (*dens_)(id);
+      prob_t prob = (*dens_)(id);
       total_prob += prob;
-      rand_table_.push_back({id, total_prob});
+      rand_table_.emplace_back({id, total_prob});
     }
 
     for (auto &item : rand_table_) {
@@ -37,11 +60,10 @@ protected:
   }
 
 private:
-  mutable D *dist_;
   mutable R *dens_;
-  const uint64_t min_;
-  const uint64_t max_;
-  std::unordered_map<uint64_t, double> rand_table_;
+  const id_t min_;
+  const id_t max_;
+  std::unordered_map<id_t, prob_t> rand_table_;
 };
 }
 #endif

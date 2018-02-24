@@ -1,9 +1,24 @@
 #ifndef SWIFTCPP_COMMON_H_
 #define SWIFTCPP_COMMON_H_
 
-#include <vector>
 #include <iostream>
 #include <sstream>
+#include <vector>
+
+// copied from mxnet
+#ifndef DISALLOW_COPY_AND_ASSIGN
+#if DMLC_USE_CXX11
+#define DISALLOW_COPY_AND_ASSIGN(T)                                            \
+  T(T const &) = delete;                                                       \
+  T(T &&) = delete;                                                            \
+  T &operator=(T const &) = delete;                                            \
+  T &operator=(T &&) = delete
+#else
+#define DISALLOW_COPY_AND_ASSIGN(T)                                            \
+  T(T const &);                                                                \
+  T &operator=(T const &)
+#endif
+#endif
 
 namespace swiftcpp {
 
