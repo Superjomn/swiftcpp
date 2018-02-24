@@ -1,13 +1,13 @@
 #ifndef SWIFT_CPP_THREAD_UTILS_H
 #define SWIFT_CPP_THREAD_UTILS_H
 
+#include <conditional_variable>
 #include <cstddef>
+#include <glog/logging.h>
 #include <queue>
 #include <thread>
 #include <utility>
 #include <vector>
-
-#include <glog/logging.h>
 
 #include "common.h"
 

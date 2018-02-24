@@ -1,4 +1,6 @@
+#include <cstring>
 #include <iostream>
+#include <limits>
 #include <sstream>
 
 #include "any_vector_compressor.h"
@@ -30,7 +32,8 @@ ANY_VECTOR_COMP_DEF(int, process_init, int dim) {
 
 ANY_VECTOR_COMP_DEF(int, statis_one, from_type *vec, int dim) {
   // VCHECK(dim == dim_,
-  //        "error in compressing vector, dims are not compatable, %d != %d", dim,
+  //        "error in compressing vector, dims are not compatable, %d != %d",
+  //        dim,
   //        dim_);
 
   for (int i = 0; i < dim_; i++) {
@@ -52,7 +55,8 @@ ANY_VECTOR_COMP_DEF(int, statis_one, from_type *vec, int dim) {
 ANY_VECTOR_COMP_DEF(int, compress_one, from_type *vec, unsigned_t *cvec,
                     int dim) {
   // VCHECK(dim == dim_,
-  //        "error in compressing vector, dims are not compatable, %d != %d", dim,
+  //        "error in compressing vector, dims are not compatable, %d != %d",
+  //        dim,
   //        dim_);
   // VCHECK_F(vec != NULL, "an invalid pointer is passed to vec");
   // VCHECK_F(cvec != NULL, "an invalid pointer is passed to cvec");
